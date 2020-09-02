@@ -624,7 +624,7 @@ contract LPTokenWrapper {
 }
 
 contract HakkaRewards1 is LPTokenWrapper, IRewardDistributionRecipient {
-    IERC20 public hakka = IERC20(0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e);
+    IERC20 public hakka = IERC20(0x0E29e5AbbB5FD88e28b2d355774e73BD47dE3bcd);
     uint256 public constant DURATION = 7 days;
 
     uint256 public periodFinish = 0;
