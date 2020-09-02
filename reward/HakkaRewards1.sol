@@ -5,7 +5,7 @@
 /___/ \_, //_//_/\__//_//_/\__/ \__//_/ /_\_\
      /___/
 
-* Synthetix: HakkaRewards2.sol
+* Synthetix: HakkaRewards1.sol
 *
 * Docs: https://docs.synthetix.io/
 *
@@ -591,7 +591,7 @@ contract LPTokenWrapper {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IERC20 public bpt = IERC20(0x1B8874BaceAAfba9eA194a625d12E8b270D77016); // HAKKA/DAI/USDC/BHSc$ 2/4/4/90 bpt
+    IERC20 public bhs = IERC20(0x35101c731b1548B5e48bb23F99eDBc2f5c341935); 
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
@@ -607,23 +607,23 @@ contract LPTokenWrapper {
     function stake(uint256 amount) public {
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
-        bpt.safeTransferFrom(msg.sender, address(this), amount);
+        bhs.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function stakeFor(address to, uint256 amount) public {
         _totalSupply = _totalSupply.add(amount);
         _balances[to] = _balances[to].add(amount);
-        bpt.safeTransferFrom(msg.sender, address(this), amount);
+        bhs.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) public {
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        bpt.safeTransfer(msg.sender, amount);
+        bhs.safeTransfer(msg.sender, amount);
     }
 }
 
-contract HakkaRewards2 is LPTokenWrapper, IRewardDistributionRecipient {
+contract HakkaRewards1 is LPTokenWrapper, IRewardDistributionRecipient {
     IERC20 public hakka = IERC20(0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e);
     uint256 public constant DURATION = 7 days;
 
@@ -727,7 +727,7 @@ contract HakkaRewards2 is LPTokenWrapper, IRewardDistributionRecipient {
 
     // incase of airdrop token
     function inCaseTokenGetsStuckPartial(IERC20 _TokenAddress, uint256 _amount) onlyOwner public {
-        require(_TokenAddress != hakka && _TokenAddress != bpt);
+        require(_TokenAddress != hakka && _TokenAddress != bhs);
         _TokenAddress.safeTransfer(msg.sender, _amount);
     }
 
