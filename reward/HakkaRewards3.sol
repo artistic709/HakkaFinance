@@ -5,7 +5,7 @@
 /___/ \_, //_//_/\__//_//_/\__/ \__//_/ /_\_\
      /___/
 
-* Synthetix: HakkaRewards2.sol
+* Synthetix: HakkaRewards3.sol
 *
 * Docs: https://docs.synthetix.io/
 *
@@ -583,8 +583,6 @@ contract IRewardDistributionRecipient is Ownable {
     }
 }
 
-// File: contracts/CurveRewards.sol
-
 pragma solidity ^0.5.0;
 
 contract LPTokenWrapper {
@@ -623,7 +621,7 @@ contract LPTokenWrapper {
     }
 }
 
-contract HakkaRewards2 is LPTokenWrapper, IRewardDistributionRecipient {
+contract HakkaRewards3 is LPTokenWrapper, IRewardDistributionRecipient {
     IERC20 public hakka = IERC20(0x0E29e5AbbB5FD88e28b2d355774e73BD47dE3bcd);
     uint256 public constant DURATION = 7 days;
 
