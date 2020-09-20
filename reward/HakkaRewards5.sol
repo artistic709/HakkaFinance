@@ -589,7 +589,7 @@ contract LPTokenWrapper {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IERC20 public TFT = IERC20(0xB8b84Ce0CAde916988BD129EaFd7934ADE5Fa6a9); // ThirdFloorToken
+    IERC20 public TFT = IERC20(0xBdDa9670Bc2a672c36ccE0102ce8C69B12E9deE3); // ThirdFloorToken
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
