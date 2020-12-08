@@ -248,7 +248,7 @@ contract VestingVault is Ownable {
     IERC20 public constant hakka = IERC20(0x0E29e5AbbB5FD88e28b2d355774e73BD47dE3bcd);
 
     uint256 public vestingPeriod = 19 days;
-    uint256 public proportion = 0.17e18;
+    uint256 public proportion = 173831376164413312; //17.38%
 
     mapping(address => uint256) public balanceOf;
     mapping(address => uint256) public lastWithdrawalTime;
