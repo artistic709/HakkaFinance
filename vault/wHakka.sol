@@ -491,7 +491,7 @@ contract stakingRateModel {
 
 contract wHakka is Ownable, ERC20Mintable{
     using SafeMath for *;
-    using SafeERC20 for IERC20'
+    using SafeERC20 for IERC20;
 
     struct vault {
         uint256 hakkaAmount;
@@ -521,7 +521,7 @@ contract wHakka is Ownable, ERC20Mintable{
     }
 
     function setStakingRateModel(address newModel) external onlyOwner {
-        currentModel = newModel;
+        currentModel = stakingRateModel(newModel);
     }
 
     function stake(address to, uint256 amount, uint256 time) public returns (uint256 wAmount) {
@@ -544,7 +544,7 @@ contract wHakka is Ownable, ERC20Mintable{
     }
 
     function unstake(address to, uint256 index, uint256 wAmount) public returns (uint256 amount) {
-        vault storage v = vaults[msg.sender][vaultCount[index]];
+        vault storage v = vaults[msg.sender][index];
         require(block.timestamp >= v.unlockTime, "locked");
         require(wAmount <= v.wAmount, "exceed locked amount");
         amount = wAmount.mul(v.hakkaAmount).div(v.wAmount);
