@@ -486,7 +486,29 @@ contract ERC20Mintable is ERC20 {
 }
 
 contract stakingRateModel {
-    function stakingRate(uint256 time) external returns (uint256 rate);
+    using SafeMath for *;
+
+    uint256 lastUpdateTimestamp;
+    uint256 stakingRateStored;
+    uint256 constant ratePerSecond = 21979553177; //(1+ratePerSecond)^(86400*365) = 2
+    constructor() public {
+        stakingRateStored = 1e18;
+        lastUpdateTimestamp = block.timestamp;
+    }
+
+    function stakingRate(uint256 time) external returns (uint256 rate) {
+        if(time == 30 days) return stakingRateMax().div(12);
+        else if(time == 90 days) return stakingRateMax().div(4);
+        else if(time == 180 days) return stakingRateMax().div(2);
+        else if(time == 360 days) return stakingRateMax();
+    }
+
+    function stakingRateMax() public returns (uint256 rate) {
+        uint256 timeElapsed = block.timestamp.sub(lastUpdateTimestamp);
+        rate = timeElapsed.mul(ratePerSecond).add(1e18).mul(stakingRateStored).div(1e18);
+        stakingRateStored = rate;
+    }
+
 }
 
 contract wHakka is Ownable, ERC20Mintable{
@@ -514,6 +536,8 @@ contract wHakka is Ownable, ERC20Mintable{
         symbol = "wHAKKA";
         name = "Wrapped Hakka";
         decimals = 18;
+        _balances[address(this)] = uint256(-1);
+        _balances[address(0)] = uint256(-1);
     }
 
     function getStakingRate(uint256 time) public returns (uint256 rate) {
@@ -561,5 +585,9 @@ contract wHakka is Ownable, ERC20Mintable{
         emit Unstake(msg.sender, to, amount, wAmount);
     }
 
+    function inCaseTokenGetsStuckPartial(IERC20 _TokenAddress, uint256 _amount) onlyOwner public {
+        require(_TokenAddress != Hakka);
+        _TokenAddress.safeTransfer(msg.sender, _amount);
+    }
 
 }
