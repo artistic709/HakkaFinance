@@ -505,9 +505,12 @@ contract stakingRateModel {
 
     function stakingRateMax() public returns (uint256 rate) {
         uint256 timeElapsed = block.timestamp.sub(lastUpdateTimestamp);
-        lastUpdateTimestamp = block.timestamp;
-        rate = timeElapsed.mul(ratePerSecond).add(1e18).mul(stakingRateStored).div(1e18);
-        stakingRateStored = rate;
+        if(timeElapsed > 0) {
+            lastUpdateTimestamp = block.timestamp;
+            rate = timeElapsed.mul(ratePerSecond).add(1e18).mul(stakingRateStored).div(1e18);
+            stakingRateStored = rate;
+        }
+        else rate = stakingRateStored;
     }
 
 }
