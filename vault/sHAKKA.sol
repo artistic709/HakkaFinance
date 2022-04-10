@@ -497,10 +497,15 @@ contract stakingRateModel {
     }
 
     function stakingRate(uint256 time) external returns (uint256 rate) {
-        if(time == 30 days) return stakingRateMax().div(12);
-        else if(time == 90 days) return stakingRateMax().div(4);
-        else if(time == 180 days) return stakingRateMax().div(2);
-        else if(time == 360 days) return stakingRateMax();
+        if(time == 30 minutes) return stakingRateMax().div(16);
+        else if(time == 7 days) return stakingRateMax().mul(100).div(1578);
+        else if(time == 30 days) return stakingRateMax().mul(100).div(1510);
+        else if(time == 90 days) return stakingRateMax().mul(100).div(1345);
+        else if(time == 180 days) return stakingRateMax().mul(100).div(1131);
+        else if(time == 360 days) return stakingRateMax().div(8);
+        else if(time == 720 days) return stakingRateMax().div(4);
+        else if(time == 1080 days) return stakingRateMax().div(2);
+        else if(time == 1440 days) return stakingRateMax();
     }
 
     function stakingRateMax() public returns (uint256 rate) {
@@ -569,6 +574,25 @@ contract sHakka is Ownable, ERC20Mintable{
         Hakka.safeTransferFrom(msg.sender, address(this), amount);
 
         emit Stake(to, msg.sender, amount, wAmount, time);
+    }
+
+    function restake(uint256 index, uint256 amount, uint256 time) external returns (uint256 wAmountAdded) {
+        vault storage v = vaults[msg.sender][index];
+        require(v.unlockTime < block.timestamp.add(time), "locked");
+        uint256 newWAmount = v.hakkaAmount.add(amount).mul(getStakingRate(time)).div(1e18);
+        require(newWAmount > 0, "invalid lockup");
+
+        wAmountAdded = newWAmount.sub(v.wAmount);
+        v.hakkaAmount = v.hakkaAmount.add(amount);
+        v.wAmount = newWAmount;
+        v.unlockTime = block.timestamp.add(time);
+
+        stakedHakka[msg.sender] = stakedHakka[msg.sender].add(amount);
+        votingPower[msg.sender] = votingPower[msg.sender].add(wAmountAdded);
+
+        _mint(msg.sender, wAmountAdded);
+        if(amount > 0) Hakka.safeTransferFrom(msg.sender, address(this), amount);
+
     }
 
     function unstake(address to, uint256 index, uint256 wAmount) external returns (uint256 amount) {
