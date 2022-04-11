@@ -531,6 +531,7 @@ contract sHakka is Ownable, ERC20Mintable{
     }
 
     event Stake(address indexed holder, address indexed depositor, uint256 amount, uint256 wAmount, uint256 time);
+    event Restake(address indexed holder, uint256 index, uint256 amountAdded, uint256 wAmountAdded, uint256 time);
     event Unstake(address indexed holder, address indexed receiver, uint256 amount, uint256 wAmount);
 
     IERC20 public constant Hakka = IERC20(0x0E29e5AbbB5FD88e28b2d355774e73BD47dE3bcd);
@@ -577,6 +578,7 @@ contract sHakka is Ownable, ERC20Mintable{
     }
 
     function restake(uint256 index, uint256 amount, uint256 time) external returns (uint256 wAmountAdded) {
+        require(index < vaultCount[msg.sender], "invalid index");
         vault storage v = vaults[msg.sender][index];
         require(v.unlockTime < block.timestamp.add(time), "locked");
         uint256 newWAmount = v.hakkaAmount.add(amount).mul(getStakingRate(time)).div(1e18);
@@ -593,6 +595,7 @@ contract sHakka is Ownable, ERC20Mintable{
         _mint(msg.sender, wAmountAdded);
         if(amount > 0) Hakka.safeTransferFrom(msg.sender, address(this), amount);
 
+        emit Restake(msg.sender, index, amount, wAmountAdded, time);
     }
 
     function unstake(address to, uint256 index, uint256 wAmount) external returns (uint256 amount) {
