@@ -689,7 +689,6 @@ contract stakingRateModel {
 
     uint256 lastUpdateTimestamp;
     uint256 stakingRateStored;
-    uint256 constant ratePerSecond = 21979553177; //(1+ratePerSecond)^(86400*365) = 2
     constructor() public {
         stakingRateStored = 1e18;
         lastUpdateTimestamp = block.timestamp;
@@ -697,9 +696,9 @@ contract stakingRateModel {
 
     function stakingRate(uint256 time) external returns (uint256 rate) {
         if(time < 30 minutes) return 0;
-        if(time > 1440 days) return 0;
+        if(time > 1461 days) return 0;
 
-        int128 t = ABDKMath64x64.divu(time, 360 days);
+        int128 t = ABDKMath64x64.divu(time, 365.25 days);
         int128 r = ABDKMath64x64.exp_2(t);
         rate = ABDKMath64x64.mulu(r, stakingRateMax()).div(16);
     }
@@ -708,7 +707,7 @@ contract stakingRateModel {
         uint256 timeElapsed = block.timestamp.sub(lastUpdateTimestamp);
         if(timeElapsed > 0) {
             lastUpdateTimestamp = block.timestamp;
-            int128 t = ABDKMath64x64.divu(timeElapsed, 360 days);
+            int128 t = ABDKMath64x64.divu(timeElapsed, 365.25 days);
             int128 r = ABDKMath64x64.exp_2(t);
             rate = ABDKMath64x64.mulu(r, stakingRateStored);
             stakingRateStored = rate;
@@ -718,7 +717,7 @@ contract stakingRateModel {
 
 }
 
-contract sHakka is Ownable, ERC20Mintable{
+contract sHakka is Ownable, ERC20Mintable {
     using SafeMath for *;
     using SafeERC20 for IERC20;
 
