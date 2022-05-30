@@ -690,7 +690,7 @@ contract stakingRateModel {
     uint256 lastUpdateTimestamp;
     uint256 stakingRateStored;
     constructor() public {
-        stakingRateStored = 1e18;
+        stakingRateStored = 0.0625e18;
         lastUpdateTimestamp = block.timestamp;
     }
 
@@ -700,7 +700,7 @@ contract stakingRateModel {
 
         int128 t = ABDKMath64x64.divu(time, 365.25 days);
         int128 r = ABDKMath64x64.exp_2(t);
-        rate = ABDKMath64x64.mulu(r, stakingRateMax()).div(16);
+        rate = ABDKMath64x64.mulu(r, stakingRateMax());
     }
 
     function stakingRateMax() public returns (uint256 rate) {
